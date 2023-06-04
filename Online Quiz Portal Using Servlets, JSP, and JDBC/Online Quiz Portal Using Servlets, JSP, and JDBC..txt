@@ -1,0 +1,1233 @@
+UserMain.java
+package com.example;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class UserMain {
+		public void insertUser(User user) throws ClassNotFoundException, SQLException {
+		DBMain db=new DBMain();
+		Connection connect=db.getConnection();
+		String s="insert into user values(?,?,?)";
+		PreparedStatement ps=connect.prepareStatement(s);
+		ps.setString(1, user.name);
+		ps.setString(2, user.email);
+		ps.setString(3, user.password);
+		ps.executeUpdate();
+	}
+	
+	public String validate(String mail,String password) throws SQLException, ClassNotFoundException {
+		DBMain db=new DBMain();
+		Connection connect=db.getConnection();
+		String s="select name from user where email=? and password=?";
+		PreparedStatement ps=connect.prepareStatement(s);
+		ps.setString(1, mail);
+		ps.setString(2, password);
+		ResultSet rs=ps.executeQuery();
+	    System.out.println("Entered Validate");
+
+		if(rs.next()) {
+		    System.out.println("Returning name");
+			return rs.getString("name");
+		}
+	    System.out.println("Returning error");
+		return "Error";
+	}
+	
+	public void updateName(String email,String name) throws SQLException, ClassNotFoundException {
+		DBMain db=new DBMain();
+		Connection connect=db.getConnection();
+		String s="update user set name=? where email=?";
+		PreparedStatement ps=connect.prepareStatement(s);
+		ps.setString(1, name);
+		ps.setString(2, email);
+		ps.executeUpdate();
+	}
+	
+	
+	public void updatePass(String email,String password) throws SQLException, ClassNotFoundException {
+		DBMain db=new DBMain();
+		Connection connect=db.getConnection();
+		String s="update user set password=? where email=?";
+		PreparedStatement ps=connect.prepareStatement(s);
+		ps.setString(1, password);
+		ps.setString(2, email);
+		ps.executeUpdate();
+	}
+	
+	public void deleteUser(String email) throws SQLException, ClassNotFoundException {
+		DBMain db=new DBMain();
+		Connection connect=db.getConnection();
+		String s="delete from user where email=?";
+		PreparedStatement ps=connect.prepareStatement(s);
+		ps.setString(1, email);
+		ps.executeUpdate();
+	}
+	
+	public List<User> getUserList() throws SQLException, ClassNotFoundException {
+		DBMain db=new DBMain();
+		Connection connect=db.getConnection();
+		String s="select * from user";
+		PreparedStatement ps=connect.prepareStatement(s);
+		ResultSet rs=ps.executeQuery();
+		List<User> list=new ArrayList<>();
+		while(rs.next()) {
+			User user=new User();
+			user.name=rs.getString("name");
+			user.email=rs.getString("email");
+			user.password=rs.getString("password");
+			list.add(user);
+		};
+		
+		return list;
+	}
+}
+
+User.java 
+
+package com.example;
+
+public class User {
+	public String name;
+	
+	public String email;
+	
+	public String password;
+}
+
+Quiz.java
+
+package com.example;
+
+public class Quiz {
+	public int id;
+	public String title;
+	public String category;
+}
+
+
+
+
+
+QuizOperations.java
+
+package com.example;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+
+public class QuizOperations {
+	public List<Quiz> getQuiz() throws SQLException, ClassNotFoundException {
+		DBMain db=new DBMain();
+		Connection connect=db.getConnection();
+		String s="select * from quiz";
+		PreparedStatement ps=connect.prepareStatement(s);
+		ResultSet rs=ps.executeQuery();
+		List<Quiz> list=new ArrayList<>();
+		while(rs.next()) {
+			Quiz q=new Quiz();
+			q.id=rs.getInt("id");
+			q.title=rs.getString("title");
+			q.category=rs.getString("category");
+			list.add(q);
+		};
+		
+		return list;
+	}
+	
+	public void insert(String title,String category) throws SQLException, ClassNotFoundException {
+		DBMain db=new DBMain();
+		Connection connect=db.getConnection();
+		String s="insert into quiz(title,category) values(?,?)";
+		PreparedStatement ps=connect.prepareStatement(s);
+		ps.setString(1, title);
+		ps.setString(2, category);
+		ps.executeUpdate();	
+	}
+	
+}
+
+
+
+Questions.java
+package com.example;
+public class Questions {
+	public int id;
+	public String question;
+	public String option1;
+	public String option2;
+	public String option3;
+	public String option4;
+	public String answer;
+}
+
+
+
+QuestionsOperations.java
+package com.example;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class QuestionsOperations {
+	public void insert(Questions q) throws SQLException, ClassNotFoundException {
+		DBMain db=new DBMain();
+		Connection connect=db.getConnection();
+		String s="insert into questions(question,option1,option2,option3,option4,answer) values(?,?,?,?,?,?)";
+		PreparedStatement ps=connect.prepareStatement(s);
+		ps.setString(1, q.question);
+		ps.setString(2, q.option1);
+		ps.setString(3, q.option2);
+		ps.setString(4, q.option3);
+		ps.setString(5, q.option4);
+		ps.setString(6, q.answer);
+		ps.executeUpdate();
+	}
+	
+	public void updateQuestion(String id,String question) throws SQLException, ClassNotFoundException {
+		DBMain db=new DBMain();
+		Connection connect=db.getConnection();
+		String s="update questions set question=? where id=?";
+		PreparedStatement ps=connect.prepareStatement(s);
+		ps.setString(1, question);
+		ps.setInt(2, Integer.parseInt(id) );
+		ps.executeUpdate();
+	}
+	
+	public void updateoption1(String id,String option) throws SQLException, ClassNotFoundException {
+		DBMain db=new DBMain();
+		Connection connect=db.getConnection();
+		String s="update questions set option1=? where id=?";
+		PreparedStatement ps=connect.prepareStatement(s);
+		ps.setString(1, option);
+		ps.setInt(2, Integer.parseInt(id) );
+		ps.executeUpdate();
+	}
+	
+	public void updateoption4(String id,String option) throws SQLException, ClassNotFoundException {
+		DBMain db=new DBMain();
+		Connection connect=db.getConnection();
+		String s="update questions set option4=? where id=?";
+		PreparedStatement ps=connect.prepareStatement(s);
+		ps.setString(1, option);
+		ps.setInt(2, Integer.parseInt(id) );
+		ps.executeUpdate();
+	}
+	
+	public void updateoption2(String id,String option) throws SQLException, ClassNotFoundException {
+		DBMain db=new DBMain();
+		Connection connect=db.getConnection();
+		String s="update questions set option2=? where id=?";
+		PreparedStatement ps=connect.prepareStatement(s);
+		ps.setString(1, option);
+		ps.setInt(2, Integer.parseInt(id) );
+		ps.executeUpdate();
+	}
+	
+	public void updateoption3(String id,String option) throws SQLException, ClassNotFoundException {
+		DBMain db=new DBMain();
+		Connection connect=db.getConnection();
+		String s="update questions set option3=? where id=?";
+		PreparedStatement ps=connect.prepareStatement(s);
+		ps.setString(1, option);
+		ps.setInt(2, Integer.parseInt(id) );
+		ps.executeUpdate();
+	}
+	
+	public void updateanswer(String id,String option) throws SQLException, ClassNotFoundException {
+		DBMain db=new DBMain();
+		Connection connect=db.getConnection();
+		String s="update questions set answer=? where id=?";
+		PreparedStatement ps=connect.prepareStatement(s);
+		ps.setString(1, option);
+		ps.setInt(2, Integer.parseInt(id) );
+		ps.executeUpdate();
+	}
+	
+	public void deleteQues(String id) throws SQLException, ClassNotFoundException {
+		DBMain db=new DBMain();
+		Connection connect=db.getConnection();
+		String s="delete from questions where id=?";
+		PreparedStatement ps=connect.prepareStatement(s);
+		ps.setInt(1, Integer.parseInt(id) );
+		ps.executeUpdate();
+	}
+	
+	public List<Questions> getQuestions() throws SQLException, ClassNotFoundException {
+		DBMain db=new DBMain();
+		Connection connect=db.getConnection();
+		String s="select * from questions";
+		PreparedStatement ps=connect.prepareStatement(s);
+		ResultSet rs=ps.executeQuery();
+		List<Questions> list=new ArrayList<>();
+		while(rs.next()) {
+			Questions q=new Questions();
+			q.id=rs.getInt("id");
+			q.question=rs.getString("question");
+			q.option1=rs.getString("option1");
+			q.option2=rs.getString("option2");
+			q.option3=rs.getString("option3");
+			q.option4=rs.getString("option4");
+			q.answer=rs.getString("answer");
+			list.add(q);
+		};
+		
+		return list;
+	}
+	
+}
+
+
+
+
+
+DBMain.java
+
+package com.example;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class DBMain {
+	public static final String DRIVER_NAME="com.mysql.jdbc.Driver";
+	public static final String URL_NAME="jdbc:mysql://localhost:3306/quiz";
+	public static final String USER_NAME="root";
+	public static final String PASS_WORD="Kabil@123";
+	
+	public Connection getConnection() throws ClassNotFoundException, SQLException {
+		Class.forName(DRIVER_NAME);
+		Connection conn=DriverManager.getConnection(URL_NAME,USER_NAME,PASS_WORD);
+		return conn;
+	}
+}
+
+
+
+Web.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+  <display-name>Online Quiz Portal</display-name>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+  </welcome-file-list>
+</web-app>
+
+
+User.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@ page import="com.example.*" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Welcome to Quiz Portal</title>
+</head>
+<body>
+		<h1>Welcome to Quiz Portal...!<br>Register</h1>
+		<form action="">
+			UserName : <input type="text" name="name" required><br><br>
+			EmailId : <input type="email" name="email" required><br><br>
+			Password : <input type="password" name="password" required><br><br>
+			<input type="submit" name="signup" value="sign up"><br><br>
+		</form>
+		Already do you have an Account? <a href="login.jsp">Sign in</a>
+		<%
+			if(request.getParameter("signup")!=null){
+				User user=new User();
+				UserMain usermain=new UserMain();
+				user.name=request.getParameter("name");
+				user.email=request.getParameter("email");
+				user.password=request.getParameter("password");
+				try{
+					usermain.insertUser(user);
+					response.sendRedirect("register.jsp");
+				}
+				catch (Exception e){
+					out.print("<h3>EmailId Already Exists</h3>");
+				}
+		
+			}
+		%>
+</body>
+</html>
+
+
+UserDetails.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@ page import="com.example.*" %>
+    <%@ page import="java.util.*" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>User Details</title>
+</head>
+<body>
+		<a href="adminPage.jsp">Go back</a>
+		<h1>User Details</h1>
+		<% 
+			UserMain qo=new UserMain();
+			List<User> list=qo.getUserList();%>
+			<table border="1">
+			<tr><th>User Name</th><th>User Email</th><th>User Password</th><th>Edit User</th><th>Delete User</th></tr>
+			<% for(User user:list){%>			
+			<tr><td><%=user.name %></td><td><%=user.email %></td><td><%=user.password %></td><td>
+			<form action="EditUser.jsp"><input type="hidden" name="email" value="<%=user.email %>">
+			<input type="submit" value="Edit" name="editUser"></form></td><td>
+			<form action=""><input type="hidden" name="email" value="<%=user.email %>">
+			<input type="submit" value="Delete" name="deleteUser"></form></td></tr>		
+			<%}%>
+			</table>
+			<% 
+				if(request.getParameter("deleteUser")!=null){
+					UserMain usermain=new UserMain();
+					usermain.deleteUser(request.getParameter("email"));
+					response.sendRedirect("UsersDetails.jsp"); 
+				}
+			%>
+</body>
+</html>
+
+
+AddQuestion.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@page import="com.example.*" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Add Question</title>
+</head>
+<body>
+	<a href="adminPage.jsp">Go back</a>
+		<h1>Add New Question</h1><br>
+		<form action="">
+			Enter Question : <input type="text" maxlength="200" name="question" required><br><br>
+			Enter option A : <input type="text" maxlength="200" name="option1" required><br><br>
+			Enter option B : <input type="text" maxlength="200" name="option2" required><br><br>
+			Enter option C : <input type="text" maxlength="200" name="option3" required><br><br>
+			Enter option D : <input type="text" maxlength="200" name="option4" required><br><br>
+			Enter answer option : <select name="answer">
+			<option>A</option>
+			<option>B</option>
+			<option>C</option>
+			<option>D</option>
+			</select><br><br>
+			<input type="submit" value="Add Question" name="addnew">
+		</form>
+		<%
+			if(request.getParameter("addnew")!=null){
+				QuestionsOperations qo=new QuestionsOperations();
+				Questions q=new Questions();
+				q.question=request.getParameter("question");
+				q.option1=request.getParameter("option1");
+				q.option2=request.getParameter("option2");
+				q.option3=request.getParameter("option3");
+				q.option4=request.getParameter("option4");
+				q.answer=request.getParameter("answer");
+				qo.insert(q);
+				out.print("<h3 align='left'>Question added Successfully</h3>");
+				
+			}
+		%>
+</body>
+</html>
+
+
+AddUser.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<%@page import="com.example.*" %>
+    <%@page import="java.util.*" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Add User</title>
+</head>
+<body>
+	
+		<a href="adminPage.jsp">Go back</a>
+		<h1>Add New User</h1>
+		<form action="">
+			UserName : <input type="text" name="name" required><br><br>
+			EmailId : <input type="email" name="email" required><br><br>
+			Password : <input type="password" name="password" required><br><br>
+			<input type="submit" name="signup" value="add user"> 
+		</form>
+		<%
+			if(request.getParameter("signup")!=null){
+				User user=new User();
+				UserMain usermain=new UserMain();
+				user.name=request.getParameter("name");
+				user.email=request.getParameter("email");
+				user.password=request.getParameter("password");
+				try{
+					usermain.insertUser(user);
+					out.print("<h3>User Details Added Successfully</h3>");
+					
+				}
+				catch(Exception e){
+					out.print("<h3>User EmailId Already Exists</h3>");
+				}
+		
+			}
+		%>
+	
+</body>
+</html>
+
+
+admin.jsp
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Admin</title>
+</head>
+<body>
+		<h1 align='center'>Welcome Back Admin!</h1>
+		<form action="" >
+		EmailId :<input type="email" name="email" required><br><br>
+		Password :<input type="password" name="password" required><br><br>
+		<input type="submit" value="login" name="admin" >
+		</form>
+	<%
+	System.out.println("Entering admin login---");
+	System.out.println(request.getParameter("email"));
+	System.out.println(request.getParameter("password"));
+	System.out.println(request.getParameter("admin"));
+		if(request.getParameter("admin")!=null){
+			if(request.getParameter("email").equals("admin@gmail.com") && request.getParameter("password").equals("admin")){
+				response.sendRedirect("adminPage.jsp");
+			}
+			else{
+				out.print("<h3 align='left'>Wrong credentials! Please try again..</h3>");
+			}
+		}
+	%>
+</body>
+</html>
+
+
+adminPage.jsp
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Admin Page</title>
+</head>
+<body>	
+	<h1>Welcome Admin!</h1>
+	<form action="">
+	<input type="submit" value="logout" name="signout"><br><br>
+	</form>
+	<%
+		if(request.getParameter("signout")!=null){
+			response.sendRedirect("admin.jsp");
+		}
+	%>
+		<table border="10" cellspacing="30">
+		<tr><th>User </th><th>Quiz </th><th>Question </th></tr>
+		<tr><td><a href="AddUser.jsp">Add New user</a></td><td><a href="CreateQuiz.jsp">Create New Quiz</a></td><td><a href="AddQuestion.jsp">Add New Question</a></td></tr>
+		<tr><td><a href="UsersDetails.jsp">User Details</a></td><td><a href="Quiz.jsp">Quiz Details</a></td><td><a href="QuestionsList.jsp">Question Details</a></td></tr>
+		</table>
+</body>
+</html> 
+
+
+
+
+
+CreateQuiz.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@ page import="com.example.*" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Create Quiz</title>
+</head>
+<body>
+	<a href="adminPage.jsp">Go back</a>
+		<h1>Create Quiz</h1>
+		<form action="">
+			Quiz title : <input type="text" name="title"><br><br>
+			Category : <select name="category"><option>Mathematics</option><option>Science</option></select><br><br>
+			<input type="submit" value="CreateQuiz" name="CreateQuiz">		
+		</form>
+	
+	<% 
+		if(request.getParameter("CreateQuiz")!=null){
+			QuizOperations qo=new QuizOperations();
+			qo.insert(request.getParameter("title"),request.getParameter("category"));
+			out.print("<h3 align='left'> Quiz Added Successfully</h3>");
+		}
+	%>
+</body>
+</html>
+
+Dashboard.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Dashboard</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<nav class="navbar navbar-light bg-light"
+		style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
+		<div class="container-fluid">
+			<div class="navbar-header"></div>
+			<ul class="nav navbar-nav">
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li>
+					<a href="#">
+						<span class="glyphicon glyphicon-user"></span>
+						<%=session.getAttribute("name")%>
+					</a>
+				</li>
+				<li>
+					<a href="#" style="display: inline-flex">
+						<span class="glyphicon glyphicon-log-out" style="top: 6px !important; right: 5px;"></span>
+						<form action="">
+							<input type="submit" name="logout" value="log out">
+						</form> 
+					</a>
+				</li>
+			</ul>
+		</div>
+	</nav>
+	<h1 style="text-align: center">Welcome!!</h1>
+		<h3  style="text-align: center">Please Click here <a href="StartQuiz.jsp">quiz link</a> to attempt the Quiz. </h3>
+
+		<%
+			if(request.getParameter("logout")!=null){
+				session.invalidate();
+				response.sendRedirect("login.jsp");
+			}
+		%>
+</body>
+</html>
+
+
+
+EditQuestion.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@ page import="com.example.*" %>
+    <%@ page import="java.util.*" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Edit Question</title>
+</head>
+<body>
+<a href="QuestionsList.jsp">Go back</a>
+		<h3>Edit Question records</h3>
+		<h3>Edit Question</h3>
+		<form action="">
+			<input type="hidden" name="id" value="<%=request.getParameter("id")%>">
+			Enter New Question : <input type="text" name="question"><br><br>
+			<input type="submit" name="updateQuestion" value="update question">
+		</form>
+		<%
+			if(request.getParameter("updateQuestion")!=null){
+				QuestionsOperations qo=new QuestionsOperations();
+				qo.updateQuestion(request.getParameter("id"),request.getParameter("question"));
+				out.print("<h3 align='center' style='color:blue'>Question updated successfully</h3>");
+			} 
+		%> 
+		<hr>
+		<h3>Edit option 1</h3>
+		<form action="">
+			<input type="hidden" name="id" value="<%=request.getParameter("id")%>">
+			Enter new option 1 : <input type="text" name="option1"><br><br>
+			<input type="submit" name="updateOption1" value="update option 1">
+		</form>
+		<%
+			if(request.getParameter("updateOption1")!=null){
+				QuestionsOperations qo=new QuestionsOperations();
+				qo.updateoption1(request.getParameter("id"),request.getParameter("option1"));
+				out.print("<h3 align='center'>Option 1 updated successfully</h3>");
+			}  
+		%> 
+		
+		
+		<hr>
+		<h3>Edit option 2</h3>
+		<form action="">
+			<input type="hidden" name="id" value="<%=request.getParameter("id")%>">
+			Enter new option 2 : <input type="text" name="option2"><br><br>
+			<input type="submit" name="updateOption2" value="update option 2">
+		</form>
+		<%
+			if(request.getParameter("updateOption2")!=null){
+				QuestionsOperations qo=new QuestionsOperations();
+				qo.updateoption2(request.getParameter("id"),request.getParameter("option2"));
+				out.print("<h3 align='center'>Option 2 updated successfully</h3>");
+			}  
+		%>
+		
+		<hr>
+		<h3>Edit option 3</h3>
+		<form action="">
+			<input type="hidden" name="id" value="<%=request.getParameter("id")%>">
+			Enter new option 3 : <input type="text" name="option3"><br><br>
+			<input type="submit" name="updateOption3" value="update option 3">
+		</form>
+		<%
+			if(request.getParameter("updateOption3")!=null){
+				QuestionsOperations qo=new QuestionsOperations();
+				qo.updateoption3(request.getParameter("id"),request.getParameter("option3"));
+				out.print("<h3 align='center'>Option 3 updated successfully</h3>");
+			}  
+		%> 
+		
+		<hr>
+		<h3>Edit option 4</h3>
+		<form action="">
+			<input type="hidden" name="id" value="<%=request.getParameter("id")%>">
+			Enter new option 4 : <input type="text" name="option4"><br><br>
+			<input type="submit" name="updateOption4" value="update option 4">
+		</form>
+		<%
+			if(request.getParameter("updateOption4")!=null){
+				QuestionsOperations qo=new QuestionsOperations();
+				qo.updateoption4(request.getParameter("id"),request.getParameter("option4"));
+				out.print("<h3 align='center'>Option 4 updated successfully</h3>");
+			}  
+		%> 
+		
+		<hr>
+		<h3>Edit Correct Option</h3>
+		<form action="">
+			<input type="hidden" name="id" value="<%=request.getParameter("id")%>">
+			Enter the new correct option : <select name="correct">
+			<option>A</option>
+			<option>B</option>
+			<option>C</option>
+			<option>D</option>
+			</select><br><br>
+			<input type="submit" name="updateOption" value="update option correct">
+		</form>
+		<%
+			if(request.getParameter("updateOption")!=null){
+				QuestionsOperations qo=new QuestionsOperations();
+				qo.updateanswer(request.getParameter("id"),request.getParameter("correct"));
+				out.print("<h3 align='center'>Option Answer Updated Successfully</h3>");
+			}  
+		%> 
+		
+</body>
+</html>
+
+
+EditUser.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@ page import="com.example.*" %>
+    <%@ page import="java.util.*" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>User Details</title>
+</head>
+<body>
+<a href="UsersDetails.jsp">Go back</a>
+		<h1>Edit User Records</h1>
+		<h1>Change User Name</h1>
+		<form action="">
+			<input type="hidden" name="email" value="<%=request.getParameter("email")%>">
+			Enter new Name : <input type="text" name="name"><br><br>
+			<input type="submit" name="updateName" value="update name">
+		</form>
+		<%
+			if(request.getParameter("updateName")!=null){
+				UserMain usermain=new UserMain();
+				usermain.updateName(request.getParameter("email"),request.getParameter("name"));
+				out.print("<h3>User Name updated successfully</h3>");
+			} 
+		%> 
+		<hr> 
+		<h1>Change User Password</h1>
+		<form action="">
+			<input type="hidden" name="email" value="<%=request.getParameter("email")%>">
+			Enter new password : <input type="text" name="password"><br><br>
+			<input type="submit" name="updatePassword" value="update password">
+		</form>
+		<%
+			if(request.getParameter("updatePassword")!=null){
+				UserMain usermain=new UserMain();
+				usermain.updatePass(request.getParameter("email"),request.getParameter("password"));
+				out.print("<h3>User Password updated successfully</h3>");
+			} 
+		%> 	
+</body>
+</html>
+
+
+Fail.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<div align="center">
+		<h1>Login failed <br>Try Sign up first...!</h1>
+		<%@ include file="User.jsp" %>
+		
+	</div>
+</body>
+</html>
+
+
+Index.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Index</title>
+</head>
+<body>
+	<h1 align='center'>Welcome to Online Quiz Portal</h1> 
+	<h2 align='center'>Admin Login</h2><a href="admin.jsp"><h3 align='center'>Admin Login</h3></a>
+	<h2 align='center'>User Login</h2><a href="User.jsp"><h3 align='center'>User Login</h3></a>	
+</body>
+</html>
+
+
+
+Learderboard.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@page import="com.example.*" %>
+    <%@page import="java.util.*" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Leader Board</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<%
+QuestionsOperations qo = new QuestionsOperations();
+List<Questions> list = qo.getQuestions();
+int totalQuestions = list.size();
+int correctAnswers = 0;
+
+for (Questions question : list) {
+    String selectedOption = request.getParameter(String.valueOf(question.id));
+    String correctOption = question.answer;
+
+    if (selectedOption != null && selectedOption.equals(correctOption)) {
+        correctAnswers++;
+    }
+}
+double percentage = (correctAnswers / (double) totalQuestions) * 100;
+%>
+<div class="jumbotron">
+    <h1 class="text-center">Quiz Result</h1>
+ </div>   
+ 	<div class="row">
+		<div class="col-md-2"></div>
+		<div class="col-md-8">
+			<table class="table table-bordered table-striped table-hover">
+		         <thead>
+		         	<th>Id</th>
+		         	<th>User</th>
+		        	<th>Score</th>
+		         </thead>
+		         <tr>
+						<td> 1 </td>
+						<td> <%= session.getAttribute("name") %> </td>
+					    <td><%= correctAnswers %></td>	
+				</tr>  
+			</table>
+		</div>
+		<div class="col-md-2"></div> 
+	</div>	 
+</body>
+</html>
+
+
+login.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@ page import="com.example.*" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Welcome to Quiz Portal</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<div class="jumbotron">
+		<h1 class="text-center">Welcome to Quiz portal</h1>
+	</div>
+		<div class="row">
+		<div class="col-md-4"></div>
+		<div class="col-md-4">
+		<form action="">
+			<label class="control-label">Enter email Id</label>
+			<input type="email" name="email" required class="form-control" ><br>
+			<label class="control-label">Enter password </label>
+			<input type="password" name="password" required class="form-control" ><br>
+			<input type="submit" name="signin" value="signin" required class="btn btn-success"><br><br>
+		</form>
+
+		Do not have an Account ? <a href="User.jsp">Sign up</a>
+		</div>
+		<div class="col-md-4"></div>
+	</div>
+		<%
+			UserMain usermain=new UserMain();   	
+			if(request.getParameter("signin")!=null){
+				String name=usermain.validate(request.getParameter("email"),request.getParameter("password"));
+				if(!name.equals("Error")){
+					session.setAttribute("name",name);
+					response.sendRedirect("dashboard.jsp");
+				}
+				else{
+					response.sendRedirect("fail.jsp");
+				}
+			}
+		%>
+</body>
+</html>
+
+
+QuestionsList.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@ page import="com.example.*" %>
+    <%@ page import="java.util.*" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Question List</title>
+</head>
+<body>
+	<a href="adminPage.jsp">Go back</a>
+	<h1>Quiz Details</h1>
+	<% 
+	QuestionsOperations qo=new QuestionsOperations();
+	List<Questions> list=qo.getQuestions();%>
+	<table border="1">
+	<tr><th>No.</th><th>Question</th><th>Option A</th><th>Option B</th><th>Option C</th><th>Option D</th><th>Correct option</th><th>Edit</th><th>Delete</th></tr>
+	<% for(Questions a:list){%>
+	<tr><td><%=a.id %></td><td><%=a.question %></td><td><%=a.option1 %></td><td><%=a.option2 %></td><td><%=a.option3 %></td><td><%=a.option4 %></td><td><%=a.answer %></td><td>
+	<form action="EditQuestion.jsp"><input type="hidden" name="id" value="<%=a.id %>">
+	<input type="submit" value="Edit" name="editQues"></form></td><td>
+	<form action=""><input type="hidden" name="id" value="<%=a.id %>">
+	<input type="submit" value="Delete" name="deleteQuestion"></form></td></tr>							
+	<%}%>
+	</table>		
+		<% 
+			if(request.getParameter("deleteQuestion")!=null){
+			QuestionsOperations qq=new QuestionsOperations();
+			qq.deleteQues(request.getParameter("id"));
+			response.sendRedirect("QuestionsList.jsp");
+			}
+		%>
+</body>
+</html>
+
+
+Quiz.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@page import="com.example.*" %>
+    <%@page import="java.util.*" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Quiz</title>
+</head>
+<body>	
+		<a href="adminPage.jsp">Go back</a>
+		<h1>Quiz Details</h1>
+		<% 
+			QuizOperations qo=new QuizOperations();
+			List<Quiz> list=qo.getQuiz();%>
+			<table border="1" width="50">
+					<tr><th>No.</th><th>Quiz Title</th><th>Category</th></tr>
+			<% for(Quiz a:list){%>			
+				<tr><td><%=a.id %></td><td><%=a.title %></td><td><%=a.category %></td></tr>		
+			<%}%>
+			</table>
+</body>
+</html>
+
+
+QuizList.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@page import="com.example.*" %>
+    <%@page import="java.util.*" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Quiz</title>
+</head>
+<body>	
+		<a href="adminPage.jsp">Go back</a>
+		<h1>Quiz Details</h1>
+		<% 
+			QuizOperations qo=new QuizOperations();
+			List<Quiz> list=qo.getQuiz();%>
+			<table border="1">
+					<tr><th>No.</th><th>Quiz Title</th><th>Category</th></tr>
+			<% for(Quiz a:list){%>			
+				<tr><td><%=a.id %></td><td><%=a.title %></td><td><%=a.category %></td>
+				</tr>		
+			<%}%>
+			</table>
+			
+</body>
+</html>
+
+
+
+QuizQues.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@page import="com.example.*" %>
+    <%@page import="java.util.*" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>	
+		<a href="adminPage.jsp">Go back</a>
+		<h1>Quiz Details</h1>
+		<% 
+			QuizOperations qo=new QuizOperations();
+			List<Quiz> list=qo.getQuiz();%>
+			
+			<% for(Quiz a:list){%>			
+				<tr><td><%=a.id %></td><td><%=a.title %></td><td><%=a.category %></td>
+				</tr>		
+			<%}%>
+			</table>
+</body>
+</html>
+
+
+register.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@page import="com.example.*" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Registration Success</title>
+</head>
+<body>
+<h1>Registration Successful</h1>
+		<%@ include file="login.jsp" %>
+</body>
+</html>
+
+
+StartQuiz.jsp
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@page import="com.example.*" %>
+    <%@page import="java.util.*" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Quiz</title>
+</head>
+<body>	
+		<a href="adminPage.jsp">Go back</a>
+		<h1>Quiz Details</h1>
+	<% 
+	QuestionsOperations qo=new QuestionsOperations();
+	List<Questions> list=qo.getQuestions();%>
+	
+	 <form action="Leaderboard.jsp" method="post">
+	<% int index = 1; %>
+	<% for(Questions a:list){%>
+		<h3><%= index %>)  <%= a.question %></h3>
+		<label>
+           <input type="radio" name="<%= a.id %>" value="<%= a.option1 %>">
+          <%= a.option1 %>
+        </label><br>
+        		<label>
+           <input type="radio" name="<%= a.id %>" value="<%= a.option2 %>">
+          <%= a.option2 %>
+        </label><br>
+        <label>
+           <input type="radio" name="<%= a.id %>" value="<%= a.option3 %>">
+          <%= a.option3 %>
+        </label><br>
+        <label>
+           <input type="radio" name="<%= a.id %>" value="<%= a.option4 %>">
+          <%= a.option4 %>
+        </label>
+        <br>
+        <% index++; %>
+	<%}%><br>
+		
+	<input type="submit" name="submit" value="Submit" required> <br><br>
+	 </form>
+	
+</body> 
+
+</html>
+
+
+
+User.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@ page import="com.example.*" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Welcome to Quiz Portal</title>
+</head>
+<body>
+        <h1>Welcome to Quiz Portal...!<br>Register</h1>
+        <form action="">
+            UserName : <input type="text" name="name" required><br><br>
+            EmailId : <input type="email" name="email" required><br><br>
+            Password : <input type="password" name="password" required><br><br>
+            <input type="submit" name="signup" value="sign up"><br><br>
+        </form>
+        Already do you have an Account? <a href="login.jsp">Sign in</a>
+        <%
+            if(request.getParameter("signup")!=null){
+                User user=new User();
+                UserMain usermain=new UserMain();
+                user.name=request.getParameter("name");
+                user.email=request.getParameter("email");
+                user.password=request.getParameter("password");
+                try{
+                    usermain.insertUser(user);
+                    response.sendRedirect("register.jsp");
+                }
+                catch (Exception e){
+                    out.print("<h3>EmailId Already Exists</h3>");
+                }
+        
+            }
+        %>
+</body>
+</html>
+
+
+
+
+UserDetails.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+    <%@ page import="com.example.*" %>
+    <%@ page import="java.util.*" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>User Details</title>
+</head>
+<body>
+		<a href="adminPage.jsp">Go back</a>
+		<h1>User Details</h1>
+		<% 
+			UserMain qo=new UserMain();
+			List<User> list=qo.getUserList();%>
+			<table border="1">
+			<tr><th>User Name</th><th>User Email</th><th>User Password</th><th>Edit User</th><th>Delete User</th></tr>
+			<% for(User user:list){%>			
+			<tr><td><%=user.name %></td><td><%=user.email %></td><td><%=user.password %></td><td>
+			<form action="EditUser.jsp"><input type="hidden" name="email" value="<%=user.email %>">
+			<input type="submit" value="Edit" name="editUser"></form></td><td>
+			<form action=""><input type="hidden" name="email" value="<%=user.email %>">
+			<input type="submit" value="Delete" name="deleteUser"></form></td></tr>		
+			<%}%>
+			</table>
+			<% 
+				if(request.getParameter("deleteUser")!=null){
+					UserMain usermain=new UserMain();
+					usermain.deleteUser(request.getParameter("email"));
+					response.sendRedirect("UsersDetails.jsp"); 
+				}
+			%>
+</body>
+</html>
+
+
